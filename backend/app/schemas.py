@@ -137,9 +137,19 @@ class RecentAccess(BaseModel):
     duration_s: int | None
 
 
+class MachineSessionInfo(BaseModel):
+    id: uuid.UUID
+    started_at: datetime
+
+
+class MachineSessionUser(BaseModel):
+    full_name: str
+    student_code_masked: str | None
+
+
 class MachineSessionOut(BaseModel):
-    session: dict[str, object]
-    user: dict[str, str | None]
+    session: MachineSessionInfo
+    user: MachineSessionUser
     recent_accesses: list[RecentAccess]
 
 
@@ -209,3 +219,8 @@ class EnrollmentCodeOut(BaseModel):
 class AdminSessionOut(SessionOut):
     student_name: str
     student_code_masked: str | None
+
+
+class AdminSessionPage(BaseModel):
+    items: list[AdminSessionOut]
+    next_cursor: str | None

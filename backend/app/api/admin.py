@@ -25,6 +25,7 @@ from app.models import (
 )
 from app.schemas import (
     AdminSessionOut,
+    AdminSessionPage,
     EnrollmentCodeOut,
     LabIn,
     LabOut,
@@ -184,7 +185,7 @@ async def list_sessions(
     machine_id: uuid.UUID | None = None,
     limit: Annotated[int, Query(ge=1, le=200)] = 50,
     cursor: str | None = None,
-) -> dict[str, object]:
+) -> AdminSessionPage:
     criteria: list[ColumnElement[bool]] = []
     if active is True:
         criteria.append(AccessSession.ended_at.is_(None))
@@ -193,10 +194,9 @@ async def list_sessions(
     if machine_id is not None:
         criteria.append(AccessSession.machine_id == machine_id)
     rows, next_cursor = await sessions.page(db, *criteria, limit=limit, cursor=cursor)
-    return {
-        "items": [(await _admin_session_out(db, s)).model_dump(mode="json") for s in rows],
-        "next_cursor": next_cursor,
-    }
+    return AdminSessionPage(
+        items=[await _admin_session_out(db, s) for s in rows], next_cursor=next_cursor
+    )
 
 
 @router.post("/sessions/{session_id}/end")
