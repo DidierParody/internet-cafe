@@ -1,2 +1,21 @@
 # Exportaciones del SRS (Word y PDF): no se versionan
 entregables/
+
+# Secretos y configuración local
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Salidas y token del simulador de equipo
+tools/fake_pc/*.png
+tools/fake_pc/.machine*.json

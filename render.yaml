@@ -1,0 +1,30 @@
+# Blueprint de Render para la API del PoC (https://render.com/docs/blueprint-spec).
+# Los secretos (sync: false) se cargan en el dashboard de Render; nunca van al repo.
+# Las migraciones NO corren en Render: se aplican con el rol owner desde fuera
+# (`uv run python -m app.db_admin migrate`), así el runtime no tiene permisos DDL.
+services:
+  - type: web
+    name: internet-cafe-api
+    runtime: python
+    plan: free
+    region: ohio # misma región que Neon (us-east-2)
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1 --proxy-headers --forwarded-allow-ips="*"
+    # /healthz no consulta la base: un health check contra la BD mantendría Neon despierto.
+    healthCheckPath: /api/v1/healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.10
+      - key: DATABASE_URL # rol svc_app (sin DDL), endpoint "-pooler" de Neon
+        sync: false
+      - key: DATA_ENC_KEY
+        sync: false
+      - key: BLIND_INDEX_KEY
+        sync: false
+      - key: JWT_PRIVATE_KEY_B64
+        sync: false
+      - key: FRONTEND_BASE_URL
+        sync: false
+      - key: ALLOWED_EMAIL_DOMAINS
+        sync: false
