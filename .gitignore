@@ -19,3 +19,9 @@ htmlcov/
 # Salidas y token del simulador de equipo
 tools/fake_pc/*.png
 tools/fake_pc/.machine*.json
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/coverage/
+frontend/*.tsbuildinfo
