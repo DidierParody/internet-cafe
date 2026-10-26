@@ -2,10 +2,10 @@
 
 | Campo | Valor |
 |---|---|
-| Versión | 2.0 (nuevo calendario: entrega el 7 de diciembre, cinco sprints y story points) |
-| Fecha | 24 de octubre de 2026 |
+| Versión | 2.1 (el PO ya no maneja cuentas de nube: dev lo monta Backend al inicio del Sprint 2) |
+| Fecha | 25 de octubre de 2026 |
 | Referencia de requisitos | `docs/srs/SRS-registro-acceso-qr.md` (SRS-IC-001) |
-| Revisiones que originan esta versión | `docs/backlog/revision-backlog.md` (ronda 1), `docs/backlog/revision-backlog-ronda2.md` (ronda 2) y el cambio de calendario del 24/10 |
+| Revisiones que originan esta versión | `docs/backlog/revision-backlog.md` (ronda 1), `docs/backlog/revision-backlog-ronda2.md` (ronda 2) el cambio de calendario del 24/10 y el ajuste del carril del PO del 25/10 (anexo D) |
 | Entrega final | **Lunes 7 de diciembre de 2026** (congelamiento: nadie cambia código) |
 | Fuente de datos | `docs/backlog/backlog.csv` (mismo contenido, para importar con un script `gh`) |
 
@@ -14,8 +14,8 @@
 - **Todo se construye desde cero.** El PoC no forma parte del proyecto.
 - **Las tareas se asignan a equipos, no a personas.** Cada líder decide quién toma cada tarea y lo asigna en GitHub. Los repartos sugeridos de la sección 3 son una ayuda, no una obligación.
 - **Granularidad:** ninguna tarea supera 6 h. Cada persona cierra 1 o 2 tareas por semana, y el tablero refleja el avance real día a día.
-- **El PO (líder técnico) se encarga del producto** (carril OPS): el tablero, el repo, las solicitudes externas, las notas de versión y el SRS. En el Sprint 1 monta por última vez el entorno dev (OPS-02, 03 y 04) y el lunes 2 lo entrega a Testing (OPS-17). Esas horas no consumen la capacidad de los equipos.
-- **Testing es dueño de DevOps desde el Sprint 2:** la CI/CD (todos los workflows de GitHub Actions), los entornos en la nube (Neon, Render, Vercel y Resend), producción, los backups, el monitoreo y las etiquetas de versión. Las tareas OPS que pasaron a Testing conservan su ID. Su líder es administrador del repo en la organización `internet-cafe-org`, así que maneja los environments y los secretos. Todo despliegue a producción lo aprueban el PO o el SM.
+- **El PO (líder técnico) se encarga del producto** (carril OPS): el tablero, el repo, las solicitudes externas, las notas de versión y el SRS. No maneja cuentas de nube ni secretos: el entorno dev lo monta Backend al inicio del Sprint 2 (OPS-02, 03 y 04), y los secretos del repo los carga el líder de Seguridad y Testing, que es administrador del repo. Las horas del PO no consumen la capacidad de los equipos.
+- **Testing es dueño de DevOps desde el Sprint 2:** la CI/CD (todos los workflows de GitHub Actions), los entornos en la nube (Neon, Render, Vercel y Resend; Backend crea las cuentas y monta dev en el Sprint 2), producción, los backups, el monitoreo y las etiquetas de versión. Las tareas OPS que pasaron a Testing conservan su ID. Su líder es administrador del repo en la organización `internet-cafe-org`, así que maneja los environments y los secretos. Todo despliegue a producción lo aprueban el PO o el SM.
 - **Un solo líder para Seguridad y Testing.** Coordina los dos equipos, así que planifica ≈ 5 h de tareas por semana en lugar de 7. Se cuenta dentro de las 3 personas de Seguridad.
 - **Manuales de usuario:** cada equipo entrega sus insumos (HU-35) y el Scrum Master redacta los documentos (SM-01 y SM-02). Las horas del SM no consumen la capacidad de los equipos.
 - **Estimación:** las historias llevan story points y las tareas llevan horas (sección 5).
@@ -52,10 +52,11 @@ Los sprints van de lunes a lunes. La review del sprint que termina, la retro y e
 | Lun 26 oct | **Sprint Planning 1** · CI mínima con gitleaks (QA-16) | Compromiso del Sprint 1. El líder de Desktop da el visto bueno al wireframe del QR (UI-03). |
 | Mar 27 oct | Hito: contrato v0.1 y wireframes del flujo principal aprobados | Desbloquea a la web y al escritorio. |
 | Vie 30 oct | **Corte de PRs** (22:00) | Todo el Sprint 1 con PR abierto y CI en verde. |
-| Sáb 31 oct | PRs de Testing a las 12:00 · fusión hasta las 18:00 · dev migrado y desplegado (OPS-11) · integración · congelamiento a las 22:00 | La demo corre en dev. |
+| Sáb 31 oct | PRs de Testing a las 12:00 (QA-05) · fusión hasta las 18:00 · integración en local con Docker Compose · congelamiento a las 22:00 | La demo corre en local; dev en la nube llega en el Sprint 2. |
 | Lun 2 nov | **Review 1 + Retro + Planning 2** · contrato v0.2 (latido y cierres) · wireframes de layout, historial, perfil y escritorio · vectores de firma | Compromiso del Sprint 2. |
 | Mar 3 nov | Contrato v0.2 completo (`/me`, admin y firma) | Desbloquea el portal y el admin. |
-| Sáb 7 nov | Casos negativos del Sprint 1 fusionados (QA-04 y QA-05) | HU-07 y HU-09 cumplen la DoD. |
+| Vie 6 nov | **Dev en la nube con despliegue automático** (OPS-02 a OPS-04 de Backend y OPS-11 de Testing) | Las historias del Sprint 1 quedan desplegadas en dev. |
+| Sáb 7 nov | Casos negativos del login fusionados (QA-04) | HU-07 cumple la DoD. |
 | Lun 9 nov | Seguimiento de mitad de sprint (30 min) | No es review. |
 | Mié 11 nov | **Dev pasa a `MACHINE_AUTH_MODE=signature`** (OPS-16) | Las peticiones del PC van firmadas en dev. |
 | Vie 13 nov | **Corte de PRs** (22:00) | — |
@@ -97,7 +98,7 @@ Los sprints van de lunes a lunes. La review del sprint que termina, la retro y e
 | Desarrollador | **≈ 11 h**: tareas 7 h, review, retro y planning 2 h, revisión de PRs 1 h, daily 0,5 h, fusión del sábado 0,5 h | **≈ 6,5 h** | ~60 h |
 | Líder de equipo | **≈ 14 h**: lo anterior más refinamiento, integración y aprobaciones | ≈ 9 h | ~75 h |
 | Líder de Seguridad y Testing | **≈ 16 h**: 5 h de tareas y la coordinación de los dos equipos | ≈ 11 h | ~85 h |
-| PO (producto) | ≈ 11 h en el Sprint 1 (incluye montar dev por última vez), ~4 h en los sprints 3 y 4 y ~9 h en el Sprint 5, más 11 h de preparación | ≈ 3,5 h | ~46 h |
+| PO (producto) | ≈ 4 h en el Sprint 1, ~4 h en los sprints 3 y 4 y ~9 h en el Sprint 5, más 11 h de preparación | ≈ 3 h | ~38 h |
 | Scrum Master | **≈ 5 h**: ceremonias y seguimiento diario de bloqueos, más 10 h de manuales en el Sprint 5 | ≈ 4 h | ~43 h |
 
 ### Semana tipo de un sprint de 1 semana
@@ -129,10 +130,10 @@ Cada celda dice **horas planificadas / capacidad**.
 |---|---|---|---|---|---|---|---|
 | UI | 3 | 21 | 21 / 21 | 18 / 21 | 16 / 21 | 13 / 21 | 2 / 21 |
 | Desktop | 4 | 28 | 28 / 28 | 25 / 28 | 13 / 28 | 9 / 28 | 2 / 28 |
-| Backend | 4 | 28 | 29 / 28 | 15 / 24 | 20 / 26 | 16 / 28 | 8 / 26 |
+| Backend | 4 | 28 | 29 / 28 | 22 / 24 | 20 / 26 | 16 / 28 | 8 / 26 |
 | Seguridad | 3 | 19 | 19 / 19 | 18 / 19 | 12 / 17 | 14 / 19 | 12 / 17 |
 | Testing | 2 | 14 | 15 / 14 | 18 / 18 | 16 / 18 | 12 / 14 | 16 / 18 |
-| **Total** | **16** | **110** | **112 / 110** | **94 / 110** | **77 / 110** | **64 / 110** | **40 / 110** |
+| **Total** | **16** | **110** | **112 / 110** | **101 / 110** | **77 / 110** | **64 / 110** | **40 / 110** |
 
 **La capacidad libre de los sprints 3 a 5 es reserva**, no trabajo pendiente de asignar: absorbe la cola de caída, los defectos y las ausencias. Si sobra, el PO decide en el planning si entra alguno de los candidatos de la sección 4.
 
@@ -140,9 +141,9 @@ Cada celda dice **horas planificadas / capacidad**.
 
 | Equipo | Sprint 1 | Sprint 2 |
 |---|---|---|
-| Backend | BE-01 + BE-06 (7) · BE-02 + BE-05 (7) · BE-04 + BE-07a (8) · BE-03 + BE-07b (7) | BE-18 + BE-08 + BE-09a (8) · BE-09b + BE-11 (7) · apoyo a Testing (4) · una persona libre para la cola de caída del Sprint 1 |
+| Backend | BE-01 + BE-06 (7) · BE-02 + BE-05 (7) · BE-04 + BE-07a (8) · BE-03 + BE-07b (7) | BE-18 + BE-08 + BE-09a (8) · BE-09b + BE-11 (7) · OPS-02 + OPS-03 + OPS-04 (7, dev en la nube, lo primero del lunes 2) · apoyo a Testing (4) |
 | Seguridad | SEC-00 + SEC-04 (7) · SEC-02 + SEC-01 (7) · SEC-05 (5, líder) | SEC-08 + SEC-07a (6) · SEC-07b + SEC-03a (6) · SEC-03b + SEC-09 (6, líder) |
-| Testing | QA-16 + OPS-05a + OPS-11 (8, CI/CD) · QA-01 + QA-02a + QA-03 (7) | QA-04 + QA-05 (7) · QA-06 + OPS-05b + OPS-16 (7) · con el apoyo de Backend: QA-07a + QA-09 (4) |
+| Testing | QA-16 + OPS-05a + QA-05 (8) · QA-01 + QA-02a + QA-03 (7) | QA-04 + OPS-11 (7) · QA-06 + OPS-05b + OPS-16 (7) · con el apoyo de Backend: QA-07a + QA-09 (4) |
 | UI | UI-01 + UI-04a (6) · UI-02 + UI-05 (8) · UI-03 + UI-04b + UI-06 (7) | UI-07a + UI-07b + UI-07c + UI-17 (7) · UI-15 + UI-04c (6) · UI-08 + UI-10 (5) |
 | Desktop | DSK-01 + DSK-02 (7) · DSK-03a + DSK-03b + DSK-04b (7) · DSK-04a + DSK-05a + DSK-05b (8) · DSK-07 + DSK-06 (6) | DSK-21 + DSK-09 + DSK-13 (6) · DSK-10 + DSK-08 (7) · DSK-11 + DSK-20 (6) · DSK-12a + DSK-12b (6) |
 
@@ -324,8 +325,8 @@ Los gráficos históricos dependen del plan de GitHub. Si no aparecen, el avance
 3. No hay secretos ni datos personales en el código ni en los logs. El contrato o el README están actualizados si aplica.
 
 **Por historia (se muestra en la review):**
-4. Están fusionados los casos negativos de Testing. **Excepción del Sprint 1:** como Testing monta la CI/CD, los casos negativos de HU-07 y HU-09 se fusionan en la primera semana del Sprint 2 (HU-36), y esas historias cuentan en la velocidad del Sprint 2.
-5. La historia está desplegada en dev y sus criterios de aceptación están verificados con evidencia.
+4. Están fusionados los casos negativos de Testing. **Excepción del Sprint 1:** los casos negativos de HU-07 (QA-04) dependen de la renovación de la sesión del Sprint 2, así que se fusionan el sábado 7 (HU-36) y HU-07 cuenta en la velocidad del Sprint 2.
+5. La historia está desplegada en dev y sus criterios de aceptación están verificados con evidencia. **Excepción del Sprint 1:** dev en la nube llega el viernes 6 (HU-36); hasta entonces, las historias del Sprint 1 se verifican en local con Docker Compose y cuentan en la velocidad del Sprint 1.
 
 ### Gestión de defectos
 
@@ -387,10 +388,11 @@ Las historias Debería y Podría también tienen fecha, pero son lo primero que 
 | lun 26/10 | Planning 1 y CI mínima con gitleaks (QA-16) |
 | mar 27/10 | Contrato v0.1 y wireframes del flujo principal aprobados |
 | vie 30/10 | Corte de PRs del Sprint 1 (22:00) |
-| sáb 31/10 | Fusión hasta las 18:00, dev desplegado (OPS-11), integración y congelamiento (22:00) |
+| sáb 31/10 | Fusión hasta las 18:00, integración en local y congelamiento (22:00) |
 | lun 02/11 | Review 1 y Planning 2; contrato v0.2 (latido y cierres) y vectores de firma |
 | mar 03/11 | Contrato v0.2 completo |
-| sáb 07/11 | Casos negativos del Sprint 1 fusionados (HU-36) |
+| vie 06/11 | Dev en la nube con despliegue automático (HU-36) |
+| sáb 07/11 | Casos negativos del login fusionados (QA-04) |
 | mié 11/11 | Dev en `MACHINE_AUTH_MODE=signature` (OPS-16) |
 | sáb 14/11 | Fusión, integración y congelamiento del Sprint 2 |
 | lun 16/11 | Review 2 y Planning 3; credencial provisional eliminada (SEC-14) |
@@ -419,19 +421,15 @@ gantt
   BE-04 Modelos y migración inicial :BE04, 2026-10-26, 2026-10-29
   DSK-01 Proyecto JavaFX con jlink :DSK01, 2026-10-26, 2026-10-28
   DSK-07 API simulada :DSK07, 2026-10-26, 2026-10-28
-  OPS-02 Neon dev y prod con roles :OPS02, 2026-10-26, 2026-10-28
   QA-01 Entorno de pruebas :QA01, 2026-10-26, 2026-10-29
   QA-03 Errores RFC 9457 :QA03, 2026-10-26, 2026-10-28
   QA-16 CI mínima con gitleaks :QA16, 2026-10-26, 2026-10-27
   UI-01 Proyecto Vue :UI01, 2026-10-26, 2026-10-28
   BE-03 BD async, Alembic y roles :BE03, 2026-10-27, 2026-10-28
-  OPS-03 Render dev :OPS03, 2026-10-27, 2026-10-29
   OPS-05a CI por componente :OPS05a, 2026-10-27, 2026-10-30
   DSK-02 Cliente HTTP :DSK02, 2026-10-28, 2026-10-30
-  OPS-04 Vercel :OPS04, 2026-10-28, 2026-10-29
   QA-02a Semilla dev :QA02a, 2026-10-28, 2026-10-30
   UI-04a Cliente API, MSW y errores :UI04a, 2026-10-28, 2026-10-30
-  OPS-11 Despliegue en dev y workflows :OPS11, 2026-10-29, 2026-10-31
   UI-04b Token en memoria :UI04b, 2026-10-29, 2026-10-31
   section EP-02 Cuentas y autenticación
   SEC-00 Llaves, utilidades y JWT :SEC00, 2026-10-26, 2026-10-28
@@ -454,6 +452,7 @@ gantt
   DSK-05b Long-poll y paso al tablero :DSK05b, 2026-10-28, 2026-10-31
   DSK-06 Tablero básico :DSK06, 2026-10-28, 2026-10-31
   UI-06 Confirmar acceso :UI06, 2026-10-28, 2026-10-31
+  QA-05 Pruebas del flujo QR :QA05, 2026-10-29, 2026-11-01
   section EP-10 Diseño de interfaz
   UI-02 Wireframes web :UI02, 2026-10-26, 2026-10-28
   UI-03 Wireframes escritorio :UI03, 2026-10-26, 2026-10-28
@@ -505,8 +504,10 @@ gantt
   UI-07c Wireframes variantes escritorio :UI07c, 2026-11-02, 2026-11-04
   UI-07b Wireframes admin :UI07b, 2026-11-03, 2026-11-06
   section EP-11 Calidad, documentación y entrega
-  OPS-17 Traspaso de DevOps a Testing :OPS17, 2026-11-02, 2026-11-03
-  QA-05 Pruebas del flujo QR :QA05, 2026-11-02, 2026-11-07
+  OPS-02 Neon dev y prod con roles :OPS02, 2026-11-02, 2026-11-04
+  OPS-03 Render dev :OPS03, 2026-11-03, 2026-11-05
+  OPS-04 Vercel :OPS04, 2026-11-04, 2026-11-05
+  OPS-11 Despliegue en dev y workflows :OPS11, 2026-11-05, 2026-11-07
   QA-04 Pruebas de auth :QA04, 2026-11-03, 2026-11-07
   OPS-05b CI completa :OPS05b, 2026-11-05, 2026-11-10
 ```
@@ -691,7 +692,7 @@ La review es el **lunes 2 de noviembre**, sobre la etiqueta `sprint-1-review` de
 *Como equipo UI, quiero el proyecto Vue listo, conectado al contrato y con la sesión manejada según el SRS.*
 
 **Criterios de aceptación:**
-- El proyecto corre en local con proxy a `/api` y en el preview de Vercel con las cabeceras de OPS-04.
+- El proyecto corre en local con proxy a `/api`. El preview de Vercel con las cabeceras de OPS-04 llega en el Sprint 2 (HU-36).
 - Lint, type-check y Vitest en verde.
 - El access token vive en una variable privada del módulo HTTP; Pinia solo guarda el nombre y el rol.
 
@@ -720,30 +721,20 @@ La review es el **lunes 2 de noviembre**, sobre la etiqueta `sprint-1-review` de
 | DSK-02 | Cliente HTTP (`java.net.http` + Jackson), DTOs del contrato, `API_BASE_URL` por perfil y timeout de 35 s | Desktop | 4 | DSK-01, BE-01 | mié 28/10 | jue 29/10 |
 | DSK-07 | API simulada local (WireMock o servidor fake) con las respuestas del contrato | Desktop | 3 | BE-01 | lun 26/10 | mar 27/10 |
 
-### HU-05 · Entornos, CI y despliegue en dev (EP-01) · Debe · 5 SP
+### HU-05 · CI desde el primer PR (EP-01) · Debe · 1 SP
 
-**Fechas:** lun 26/10 → vie 30/10
+**Fechas:** lun 26/10 → jue 29/10
 
-*Como equipo, queremos el entorno dev y la CI funcionando para que la integración del sábado solo sea conectar.*
+*Como equipo, queremos la CI funcionando desde el primer PR para que la integración del sábado solo sea conectar.*
 
 **Criterios de aceptación:**
-- **Neon (PO):** dev y prod son proyectos separados, con tope de 0,25 CU, roles y privilegios por defecto (la app solo puede SELECT, INSERT y UPDATE).
-- **API en dev (PO):** corre en Render dev con `--workers 1`, auto-deploy apagado y llaves propias de dev.
-- **Web (PO):** Vercel apunta a Render dev.
-- **Secretos (PO):** el PO carga en el environment `dev` la URL del migrador y el deploy hook. Los workflows no los imprimen.
 - **CI (Testing):** `ci-ok` con gitleaks corre desde el primer PR (lunes 26). Desde el jueves 29 agrega lint y pruebas por componente y el check de una sola cabeza de Alembic.
-- **Despliegue (Testing):** cada push a `main` verifica que haya una sola cabeza de Alembic, migra con el rol migrador, dispara el deploy hook y corre una prueba de humo.
-- **Workflows manuales en dev (Testing):** `seed` y `reset`. El administrador de dev lo crea la semilla.
-- **Cuentas:** Neon, Render y Vercel se crean con una cuenta del equipo (correo del proyecto y 2FA), porque sus planes gratuitos no admiten miembros. Es el último trabajo de nube del PO: el lunes 2 se entrega a Testing (OPS-17).
+- **Integración del sábado en local:** la API y la base de datos corren con Docker Compose (BE-03), la web con su proxy a `/api` y los PCs apuntan a esa API. Dev en la nube llega en el Sprint 2 (HU-36).
 
 | ID | Tarea | Equipo | h | Depende de | Inicio | Fin |
 |---|---|---|---|---|---|---|
-| OPS-02 | Neon: proyectos dev y prod con tope de 0,25 CU, `bootstrap_roles.sql` (migrador y app) y privilegios por defecto de solo SELECT, INSERT y UPDATE | PO | 3 | — | lun 26/10 | mar 27/10 |
-| OPS-03 | Render dev: servicio con `--workers 1`, auto-deploy apagado, variables y llaves de dev generadas con `tools/keys` | PO | 2 | BE-02, SEC-00 | mar 27/10 | mié 28/10 |
-| OPS-04 | Vercel: Root `frontend/`, rewrite de `/api` a Render dev, cabeceras (CSP con `style-src`), Ignored Build Step, previews sin protección y prueba con commit de un colaborador (PEND-03) | PO | 2 | UI-01, OPS-03 | mié 28/10 | mié 28/10 |
 | QA-16 | CI mínima: workflow `ci-ok` con gitleaks en cada PR. Es el primer PR del repo, y el PO lo marca como check obligatorio de `main` | Testing | 1 | OPS-00 | lun 26/10 | lun 26/10 |
 | OPS-05a | CI por componente: lint y pruebas con PostgreSQL de servicio y roles, y check de una sola cabeza de Alembic, todo agregado en `ci-ok` | Testing | 3 | BE-03, UI-01, DSK-01, QA-01, QA-16 | mar 27/10 | jue 29/10 |
-| OPS-11 | Despliegue en dev: pipeline en push a `main` (cabeza única → migración → deploy hook → humo) y workflows manuales `seed` y `reset` en el environment `dev` (el workflow del CLI de administración llega con QA-18) | Testing | 4 | BE-04, QA-02a, OPS-03, OPS-04, OPS-05a | jue 29/10 | vie 30/10 |
 
 ### HU-06 · Diseños del flujo principal (EP-10) · Debe · 2 SP
 
@@ -814,7 +805,7 @@ La review es el **lunes 2 de noviembre**, sobre la etiqueta `sprint-1-review` de
 
 ### HU-09 · Registrar el acceso escaneando el QR (EP-04) · Debe · 13 SP
 
-**Fechas:** lun 26/10 → vie 30/10
+**Fechas:** lun 26/10 → sáb 31/10
 
 *Como estudiante, quiero escanear el QR del PC y confirmar para empezar a usarlo.*
 
@@ -828,7 +819,7 @@ La review es el **lunes 2 de noviembre**, sobre la etiqueta `sprint-1-review` de
 - **Login a mitad del flujo:** si el estudiante debe iniciar sesión, el token del QR se conserva en memoria.
 - **Tiempo:** el PC muestra el nombre en menos de 1 s.
 - **Demo repetible:** el perfil dev del PC tiene un botón "Volver al QR".
-- Sus casos negativos (QA-05) se fusionan en la primera semana del Sprint 2 (HU-36).
+- Sus casos negativos (QA-05) se fusionan el sábado 31 con los PRs de Testing, así que HU-09 cumple la DoD 4 en el Sprint 1.
 
 | ID | Tarea | Equipo | h | Depende de | Inicio | Fin |
 |---|---|---|---|---|---|---|
@@ -842,15 +833,16 @@ La review es el **lunes 2 de noviembre**, sobre la etiqueta `sprint-1-review` de
 | DSK-05b | Long-poll en un hilo virtual con máquina de estados, paso al tablero y cancelación de la rotación al recibir `approved` | Desktop | 3 | DSK-05a, BE-06 | mié 28/10 | vie 30/10 |
 | DSK-06 | Tablero básico: nombre, código enmascarado, hora de inicio y cronómetro; log con la hora de `approved` y la del tablero visible; botón "Volver al QR" solo en el perfil dev | Desktop | 3 | UI-03, DSK-05b | mié 28/10 | vie 30/10 |
 | UI-06 | Ruta `/s#token`: leer el fragmento, limpiar la URL, conservar el token durante el login (RF-QR-05), vista previa con aviso de sesión activa, confirmar y mensajes de RF-QR-08 | UI | 4 | UI-05, UI-04b, BE-07b | mié 28/10 | vie 30/10 |
+| QA-05 | Pruebas del flujo QR: vencido, usado, de otro equipo, confirmación concurrente, `superseded`, `MACHINE_BUSY`, máximo 2 vigentes, RN-02 y la carrera con la rotación | Testing | 4 | BE-07b, QA-01 | jue 29/10 | sáb 31/10 |
 
 **Ruta crítica del Sprint 1:**
-- **API:** SEC-00 y BE-01 (martes) → BE-04 y SEC-04 (miércoles) → BE-05, BE-07a y BE-07b (jueves) → BE-06 y SEC-05 (viernes) → corte de PRs el viernes en la noche → fusión, OPS-11 e integración el sábado.
-- **CI/CD:** QA-16 el lunes (primer PR) → OPS-05a el jueves → OPS-11 el viernes.
+- **API:** SEC-00 y BE-01 (martes) → BE-04 y SEC-04 (miércoles) → BE-05, BE-07a y BE-07b (jueves) → BE-06 y SEC-05 (viernes) → corte de PRs el viernes en la noche → fusión e integración en local el sábado.
+- **CI y pruebas:** QA-16 el lunes (primer PR) → OPS-05a el jueves → QA-05 del jueves al sábado.
 - **Web y escritorio:** avanzan con MSW y con la API simulada hasta el jueves.
 
 ### Cola de caída del Sprint 1
 
-Si el viernes en la noche algo no llega, se cae en este orden sin tocar el objetivo del sprint (≈ 6 h liberables, frente a +2 h de exceso). Lo que cae pasa a la primera semana del Sprint 2:
+Si el viernes en la noche algo no llega, se cae en este orden sin tocar el objetivo del sprint (≈ 5 h liberables, frente a +2 h de exceso). Lo que cae pasa a la primera semana del Sprint 2:
 
 | Orden | Qué cae | Cómo queda |
 |---|---|---|
@@ -858,35 +850,42 @@ Si el viernes en la noche algo no llega, se cae en este orden sin tocar el objet
 | 2 | Mensajes detallados de RF-QR-08 en UI-06 | Un mensaje genérico con "Escanea el código nuevo" |
 | 3 | Validaciones en vivo de UI-05 | Validación al enviar |
 | 4 | Idempotencia y auditoría del claim (BE-07b) | Se completan el martes 3 |
-| 5 | Workflow `reset` de OPS-11 | Se completa el martes 3; el sábado basta con `seed` |
 
 ## 9. Sprint 2 (2 – 16 nov)
 
 **Dos semanas con la carga de una.** Hay un solo corte (viernes 13), una sola fusión (sábado 14) y un seguimiento el lunes 9.
 
 **Objetivo del sprint:** *sesión completa y firmada en dev.*
-- Casos negativos del Sprint 1 y CI completa en la primera semana.
+- Dev en la nube con despliegue automático, casos negativos del login y CI completa en la primera semana.
 - Sesiones con latido y cierres desde el PC, la web y por inactividad.
 - Inicio, historial y perfil del estudiante, con la sesión web renovada sola y protegida.
 - Modos pasivo y kiosco con cambio remoto, reconexión y corrección de reloj.
 - **Peticiones del PC firmadas y verificadas en dev desde el miércoles 11.**
 
-### HU-36 · Casos negativos del Sprint 1, CI completa y traspaso de DevOps (EP-11) · Debe · 3 SP
+### HU-36 · Dev en la nube, CI completa y casos negativos del login (EP-11) · Debe · 5 SP
 
 **Fechas:** lun 02/11 → lun 09/11
 
-*Como equipo, queremos cerrar las historias del Sprint 1 con sus casos negativos, tener una CI completa y que Testing opere DevOps sin depender del PO.*
+*Como equipo, queremos dev en la nube con despliegue automático, la CI completa y los casos negativos del login, sin depender del PO para ninguna credencial.*
 
 **Criterios de aceptación:**
-- QA-04 y QA-05 se fusionan a más tardar el sábado 7. Con ellos, HU-07 y HU-09 cumplen la DoD 4.
+- **Neon (Backend):** dev y prod son proyectos separados, con tope de 0,25 CU, roles y privilegios por defecto (la app solo puede SELECT, INSERT y UPDATE).
+- **API en dev (Backend):** corre en Render dev con `--workers 1`, auto-deploy apagado y llaves propias de dev.
+- **Web (Backend):** Vercel apunta a Render dev, y un commit de un colaborador despliega (PEND-03).
+- **Cuentas:** Backend crea las de Neon, Render y Vercel con el correo del proyecto y 2FA, porque sus planes gratuitos no admiten miembros. Las guarda el líder de Seguridad y Testing en un gestor de contraseñas compartido. El PO no tiene credenciales de nube.
+- **Secretos (líder de Seguridad y Testing, administrador del repo):** carga en el environment `dev` la URL del migrador y el deploy hook. Los workflows no los imprimen.
+- **Despliegue (Testing):** desde el viernes 6, cada push a `main` verifica que haya una sola cabeza de Alembic, migra con el rol migrador, dispara el deploy hook y corre una prueba de humo. Con eso, las historias del Sprint 1 quedan desplegadas en dev.
+- **Workflows manuales en dev (Testing):** `seed` y `reset`. El administrador de dev lo crea la semilla.
+- QA-04 se fusiona a más tardar el sábado 7. Con él, HU-07 cumple la DoD 4.
 - La CI mide la cobertura de la API con umbral, compara el contrato con oasdiff y corre pip-audit y npm audit dentro de `ci-ok`.
-- **Traspaso (lunes 2):** el PO entrega las credenciales de las cuentas del equipo (Neon, Render y Vercel) en un gestor de contraseñas compartido, y Testing despliega dev sin el PO (OPS-17). Desde ahí, todo DevOps es de Testing.
 
 | ID | Tarea | Equipo | h | Depende de | Inicio | Fin |
 |---|---|---|---|---|---|---|
-| OPS-17 | Traspaso de DevOps a Testing: credenciales de las cuentas del equipo en un gestor de contraseñas compartido, secretos del repo y runbook; Testing despliega dev sin el PO | PO | 1 | OPS-11 | lun 02/11 | lun 02/11 |
+| OPS-02 | Neon: proyectos dev y prod con tope de 0,25 CU, `bootstrap_roles.sql` (migrador y app) y privilegios por defecto de solo SELECT, INSERT y UPDATE | Backend | 3 | — | lun 02/11 | mar 03/11 |
+| OPS-03 | Render dev: servicio con `--workers 1`, auto-deploy apagado, variables y llaves de dev generadas con `tools/keys` | Backend | 2 | BE-02, SEC-00, OPS-02 | mar 03/11 | mié 04/11 |
+| OPS-04 | Vercel: Root `frontend/`, rewrite de `/api` a Render dev, cabeceras (CSP con `style-src`), Ignored Build Step, previews sin protección y prueba con commit de un colaborador (PEND-03) | Backend | 2 | UI-01, OPS-03 | mié 04/11 | mié 04/11 |
+| OPS-11 | Despliegue en dev: pipeline en push a `main` (cabeza única → migración → deploy hook → humo) y workflows manuales `seed` y `reset` en el environment `dev` (el workflow del CLI de administración llega con QA-18) | Testing | 4 | BE-04, QA-02a, OPS-03, OPS-04, OPS-05a | jue 05/11 | vie 06/11 |
 | QA-04 | Pruebas de auth, casos negativos: credenciales inválidas, registro con correo existente, refresh vencido o revocado, logout | Testing | 3 | SEC-03a, QA-01 | mar 03/11 | vie 06/11 |
-| QA-05 | Pruebas del flujo QR: vencido, usado, de otro equipo, confirmación concurrente, `superseded`, `MACHINE_BUSY`, máximo 2 vigentes, RN-02 y la carrera con la rotación | Testing | 4 | BE-07b, QA-01 | lun 02/11 | vie 06/11 |
 | OPS-05b | CI completa: pytest-cov con umbral, oasdiff contra el contrato, pip-audit y npm audit, agregados en `ci-ok` | Testing | 2 | OPS-05a | jue 05/11 | lun 09/11 |
 
 ### HU-31 · Contrato v0.2, clientes al día y estructura de la web (EP-01) · Debe · 3 SP
@@ -1011,7 +1010,7 @@ Si el viernes en la noche algo no llega, se cae en este orden sin tocar el objet
 | DSK-12b | Firmar todas las peticiones del equipo y verificar en Render dev, en modo `dual`, que el servidor valida cada firma (después OPS-16 pasa dev a `signature`) | Desktop | 2 | DSK-12a, SEC-07b | mar 10/11 | mié 11/11 |
 | DSK-13 | Truststore propio con las raíces de Render, sin proxy del sistema y solo TLS 1.3 | Desktop | 2 | DSK-02 | lun 02/11 | mié 04/11 |
 | QA-09 | Pruebas de firma: alteración, repetición, desfase de reloj, equipo no activo y modos `dual` y `signature` | Testing | 2 | SEC-07b | mar 10/11 | jue 12/11 |
-| OPS-16 | Pasar Render dev a `MACHINE_AUTH_MODE=signature` el miércoles 11 y verificar el latido firmado | Testing | 1 | DSK-12b, SEC-07b, OPS-17 | mié 11/11 | mié 11/11 |
+| OPS-16 | Pasar Render dev a `MACHINE_AUTH_MODE=signature` el miércoles 11 y verificar el latido firmado | Testing | 1 | DSK-12b, SEC-07b, OPS-11 | mié 11/11 | mié 11/11 |
 
 ### HU-17 · Conexión inestable y reloj desfasado (EP-08) · Debe · 1 SP
 
@@ -1177,7 +1176,7 @@ El Sprint 2 se planifica por debajo de la capacidad para absorber lo que se caig
 
 | ID | Tarea | Equipo | h | Depende de | Inicio | Fin |
 |---|---|---|---|---|---|---|
-| OPS-08 | Producción en la nube: Render prod, Neon prod, segundo proyecto de Vercel, secretos del environment `prod`, llaves de prod con respaldo cifrado fuera de línea y `MACHINE_AUTH_MODE=signature` | Testing | 3 | OPS-02, OPS-17 | lun 16/11 | mar 17/11 |
+| OPS-08 | Producción en la nube: Render prod, Neon prod, segundo proyecto de Vercel, secretos del environment `prod`, llaves de prod con respaldo cifrado fuera de línea y `MACHINE_AUTH_MODE=signature` | Testing | 3 | OPS-02, OPS-11 | lun 16/11 | mar 17/11 |
 | QA-17 | Pipeline de producción desde etiquetas `v*`: la API con la aprobación del environment `prod` (cabeza única, migración, deploy hook y humo) y la web con la CLI de Vercel | Testing | 3 | OPS-08, OPS-11, OPS-05b | lun 16/11 | mié 18/11 |
 | OPS-14 | Workflow de release que publica el `.msi` de prod (con `API_BASE_URL` de prod) en GitHub Releases | Testing | 2 | DSK-14a, DSK-12b, QA-17 | jue 19/11 | vie 20/11 |
 
@@ -1492,10 +1491,11 @@ El Sprint 2 se planifica por debajo de la capacidad para absorber lo que se caig
 |---|---|---|
 | El contrato de API se atrasa y bloquea a web y escritorio | Media | El líder de Backend lo prioriza (martes 27). La v0.2 sale en dos entregas, lunes 2 y martes 3. |
 | Poca experiencia con FastAPI asíncrono, JavaFX, Vue o criptografía | Alta | Tareas de 6 h o menos, trabajo en pares, repartos sugeridos, vectores de firma y firmador de referencia. |
-| La integración del sábado falla | Media | Corte de PRs con CI en verde el viernes, APIs simuladas desde el día 1, despliegue automático en dev y cola de caída. |
+| La integración del sábado falla | Media | Corte de PRs con CI en verde el viernes, APIs simuladas desde el día 1, integración en local con Docker Compose en el Sprint 1, despliegue automático en dev desde el Sprint 2 y cola de caída. |
+| Dev en la nube llega en el Sprint 2 y la review del Sprint 1 se muestra en local | Media | OPS-02 a OPS-04 son lo primero de Backend el lunes 2 y OPS-11 lo primero de Testing el jueves 5; si se atrasan, pasan delante de BE-09b. |
 | La firma falla al desplegarse (proxy TLS de Render, DER → r‖s) | Media | `PUBLIC_API_BASE_URL`, vectores con cero inicial, modo `dual`, dev en `signature` el miércoles 11 y SEC-14 el lunes 16. |
-| Testing es el equipo más cargado: pruebas y DevOps con 2 personas | Alta | Traspaso ordenado el lunes 2 (OPS-17), apoyo de Backend en el Sprint 2 y de Backend y Seguridad en los sprints 3 y 5, casos negativos del Sprint 1 en la primera semana del Sprint 2, runbook, y aprobación del PO o el SM para todo despliegue a producción. |
-| Las cuentas gratuitas de Neon, Render y Vercel no admiten miembros | Media | Cuentas del equipo con 2FA, credenciales en un gestor compartido entre el PO y el líder de Seguridad y Testing, y tokens de API guardados como secretos del repo. |
+| Testing es el equipo más cargado: pruebas y DevOps con 2 personas | Alta | Backend monta dev en el Sprint 2 (OPS-02, 03 y 04), apoyo de Backend en el Sprint 2 y de Backend y Seguridad en los sprints 3 y 5, casos negativos del login en la primera semana del Sprint 2, runbook, y aprobación del PO o el SM para todo despliegue a producción. |
+| Las cuentas gratuitas de Neon, Render y Vercel no admiten miembros | Media | Cuentas del equipo con el correo del proyecto y 2FA, creadas por Backend y guardadas por el líder de Seguridad y Testing en un gestor compartido, y tokens de API guardados como secretos del repo. El PO no tiene credenciales de nube. |
 | El líder de Seguridad y Testing coordina dos equipos | Media | Planifica ≈ 5 h de tareas, hace un solo refinamiento para ambos y el SM toma el seguimiento diario de bloqueos de los dos equipos. |
 | La extensión diluye el ritmo de trabajo | Media | Sprints semanales con corte fijo, objetivo de sprint y velocidad en story points visible en cada review. La capacidad libre no se llena sin decisión del PO. |
 | Secretos expuestos en el repo público | Media | Environment `prod` con aprobación del PO o el SM, CODEOWNERS de `.github/workflows/`, gitleaks desde el primer PR (QA-16) y push protection. |
@@ -1509,13 +1509,13 @@ El Sprint 2 se planifica por debajo de la capacidad para absorber lo que se caig
 | Iteración | Historias | Story points | Tareas de equipos | Horas de equipos | Capacidad | Tareas del PO | Tareas del SM |
 |---|---|---|---|---|---|---|---|
 | Preparación | HU-00 | 3 | 0 | — | — | 3 (9 h) | — |
-| Sprint 1 | HU-01, HU-02, HU-03, HU-04, HU-05, HU-06, HU-07, HU-08 y HU-09 | 41 | 36 | 112 | 110 | 3 (7 h) | — |
-| Sprint 2 | HU-10, HU-13, HU-16, HU-17, HU-19, HU-21, HU-22, HU-31 y HU-36 | 33 | 35 | 94 | 110 | 1 (1 h) | — |
+| Sprint 1 | HU-01, HU-02, HU-03, HU-04, HU-05, HU-06, HU-07, HU-08 y HU-09 | 37 | 36 | 112 | 110 | — | — |
+| Sprint 2 | HU-10, HU-13, HU-16, HU-17, HU-19, HU-21, HU-22, HU-31 y HU-36 | 35 | 38 | 101 | 110 | — | — |
 | Sprint 3 | HU-11, HU-12, HU-14, HU-15, HU-18, HU-20, HU-25, HU-28, HU-32, HU-33, HU-34 y HU-38 | 24 | 29 | 77 | 110 | — | — |
 | Sprint 4 | HU-23, HU-24, HU-26, HU-27, HU-35 y HU-39 | 23 | 21 | 64 | 110 | — | — |
 | Sprint 5 | HU-29, HU-30 y HU-40 | 15 | 16 | 40 | 110 | 1 (3 h) | 2 (10 h) |
 
-Total: 11 épicas, 40 historias (139 story points) y 147 tareas, todas con fecha. El carril del PO suma 20 h, y el del SM, 10 h.
+Total: 11 épicas, 40 historias (137 story points) y 146 tareas, todas con fecha. El carril del PO suma 12 h, y el del SM, 10 h.
 
 ## Anexo A. Cambios de la v1.2 frente a la v1.1
 
@@ -1648,3 +1648,16 @@ Responden al cambio de calendario del 24/10.
   - SEC-10 pasa a HU-20;
   - BE-20 deja de ser una excepción de la estabilización y entra en HU-15;
   - UI-12 vuelve a UI.
+
+## Anexo D. Cambios de la v2.1 frente a la v2.0
+
+El 25/10, antes de empezar el Sprint 1, el PO deja de manejar cuentas de nube y credenciales:
+
+- **OPS-02, OPS-03 y OPS-04** (Neon, Render y Vercel de dev, 7 h) pasan del carril del PO a **Backend**, al inicio del Sprint 2 (lunes 2 a miércoles 4). Backend tenía 9 h libres en ese sprint y queda en 22 de 24.
+- **OPS-11** (despliegue automático en dev) pasa al jueves 5 y viernes 6 del Sprint 2, porque necesita Render y Vercel.
+- **QA-05** (casos negativos del flujo QR) sube al Sprint 1 (jueves 29 a sábado 31) y pasa a HU-09, que así cumple la DoD 4 en su sprint. Testing queda igual: 15 de 14 en el Sprint 1 y 18 de 18 en el Sprint 2.
+- **OPS-17** (traspaso de credenciales) se elimina: ya no hay nada que traspasar.
+- **Cuentas y secretos:** Backend crea las cuentas con el correo del proyecto y 2FA; el líder de Seguridad y Testing las guarda y, como administrador del repo, carga los secretos.
+- **HU-05** queda como «CI desde el primer PR» (1 SP) y **HU-36** pasa a «Dev en la nube, CI completa y casos negativos del login» (5 SP).
+- La integración y la demo del Sprint 1 corren en local con Docker Compose; las historias del Sprint 1 se despliegan en dev el viernes 6.
+- El carril del PO baja de 20 h a 12 h, y el total del plan, de 139 a 137 story points y de 147 a 146 tareas.
