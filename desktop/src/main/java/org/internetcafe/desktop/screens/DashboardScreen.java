@@ -15,10 +15,10 @@ public class DashboardScreen {
         Label title = new Label("Panel del equipo");
         title.setStyle("-fx-font-size: 28px; -fx-font-weight: 700;");
 
-        statusLabel = new Label("Sin sesión activa");
+        statusLabel = new Label("Sin sesiÃ³n activa");
         statusLabel.setStyle("-fx-font-size: 18px;");
 
-        Button logoutButton = new Button("Cerrar sesión");
+        Button logoutButton = new Button("Cerrar sesiÃ³n");
         logoutButton.setOnAction(
                 event -> {
                     if (onLogout != null) {

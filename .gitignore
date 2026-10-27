@@ -1,2 +1,4 @@
 # Exportaciones del SRS (Word y PDF): no se versionan
 entregables/
+/desktop/.gradle/
+/desktop/build/

@@ -14,7 +14,7 @@ public class QrScreen {
         Label title = new Label("QR de acceso");
         title.setStyle("-fx-font-size: 26px; -fx-font-weight: 700;");
 
-        Label qrPlaceholder = new Label("Código QR");
+        Label qrPlaceholder = new Label("CÃ³digo QR");
         qrPlaceholder.setStyle(
                 "-fx-font-size: 22px; -fx-border-color: #7c7c7c; -fx-border-width: 2; -fx-padding: 80 120; -fx-background-color: white;");
 

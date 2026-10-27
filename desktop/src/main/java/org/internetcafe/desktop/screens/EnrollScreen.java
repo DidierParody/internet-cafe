@@ -18,7 +18,7 @@ public class EnrollScreen {
         title.setStyle("-fx-font-size: 26px; -fx-font-weight: 700;");
 
         TextField codeField = new TextField();
-        codeField.setPromptText("Código de enrolamiento");
+        codeField.setPromptText("CÃ³digo de enrolamiento");
 
         TextField roomField = new TextField();
         roomField.setPromptText("Sala");

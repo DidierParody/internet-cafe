@@ -21,7 +21,7 @@ public class LoginScreen {
         emailField.setPromptText("Correo institucional");
 
         PasswordField passwordField = new PasswordField();
-        passwordField.setPromptText("Contraseña");
+        passwordField.setPromptText("ContraseÃ±a");
 
         Button loginButton = new Button("Entrar");
         Button enrollButton = new Button("Enrolar equipo");
