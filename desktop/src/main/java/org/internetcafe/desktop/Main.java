@@ -28,7 +28,7 @@ public class Main extends Application {
         loginScreen.setOnLoginSuccess(
                 () -> {
                     stage.setScene(new Scene(dashboardScreen.getRoot(), 1280, 800));
-                    dashboardScreen.setStatus("Sesión iniciada");
+                    dashboardScreen.setStatus("SesiÃ³n iniciada");
                 });
 
         loginScreen.setOnEnroll(
