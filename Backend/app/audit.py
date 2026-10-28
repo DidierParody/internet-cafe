@@ -19,15 +19,6 @@ async def audit(
 ):
     """
     Helper para registrar una acción en el log de auditoría.
-    
-    Args:
-        db: La sesión activa de la base de datos.
-        actor_type: Quién realiza la acción (user, machine, system).
-        action: Nombre de la acción (ej. 'user.login').
-        actor_id: UUID de quien actúa.
-        target_type: Tipo de objeto afectado (ej. 'session').
-        target_id: UUID del objeto afectado.
-        metadata_info: Datos adicionales sin PII.
     """
     log_entry = AuditLog(
         actor_type=actor_type,
@@ -38,4 +29,3 @@ async def audit(
         metadata_info=metadata_info
     )
     db.add(log_entry)
-    # El commit se hace en el endpoint que llama a esta función para mantener la transacción atómica.
