@@ -32,7 +32,7 @@ public class ApiClient {
 
             return response.body();
         } catch (Exception e) {
-            return "{""status"":""offline""}";
+            return "{\"status\":\"offline\"}";
         }
     }
 
