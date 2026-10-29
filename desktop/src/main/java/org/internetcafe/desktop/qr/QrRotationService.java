@@ -20,7 +20,7 @@ public final class QrRotationService implements AutoCloseable {
 
   public static final int DEFAULT_MARGIN_SECONDS = 5;
   public static final int DEFAULT_MAX_ATTEMPTS = 3;
-  public static final int DEFAULT_QR_SIZE = 200;
+  public static final int DEFAULT_QR_SIZE = 320;
 
   private static final long NANOS_PER_SECOND = 1_000_000_000L;
   private static final Logger log = Logger.getLogger(QrRotationService.class.getName());
