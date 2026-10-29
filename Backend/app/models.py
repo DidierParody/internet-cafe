@@ -1,6 +1,6 @@
 """Modelos de Base de Datos para el Sistema de Registro de Acceso por QR.
 
-Este módulo define las tablas finales del MVP según el SRS-IC-001 (Sección 11.2).
+Define las tablas finales del MVP según el SRS-IC-001 (Sección 11.2).
 Utiliza SQLAlchemy 2.0 y ubica las tablas en el esquema 'app' exigido por el SRS.
 """
 
