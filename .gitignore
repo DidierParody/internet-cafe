@@ -3,11 +3,6 @@ entregables/
 /desktop/.gradle/
 /desktop/build/
 
-# Exportaciones del SRS (Word y PDF): no se versionan
-entregables/
-/desktop/.gradle/
-/desktop/build/
-
 # Secretos locales: nunca se suben (el repo es publico)
 .env
 .env.*
