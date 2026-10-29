@@ -10,6 +10,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import org.internetcafe.desktop.AppConfig;
+import org.internetcafe.desktop.contract.ChallengeResponse;
 import org.internetcafe.desktop.contract.EnrollmentRequest;
 import org.internetcafe.desktop.contract.EnrollmentResponse;
 import org.internetcafe.desktop.contract.HealthResponse;
@@ -58,6 +59,16 @@ public class ApiClient {
             .GET()
             .build();
     return send(request, TemporaryCredentialResponse.class);
+  }
+
+  public ChallengeResponse createChallenge(String machineCode)
+      throws IOException, InterruptedException {
+    HttpRequest request =
+        requestBuilder(API_PATH + "/machine/challenges")
+            .header("X-Machine-Code", machineCode)
+            .POST(HttpRequest.BodyPublishers.noBody())
+            .build();
+    return send(request, ChallengeResponse.class);
   }
 
   public LongPollResponse longPoll(String lastEventId) throws IOException, InterruptedException {
