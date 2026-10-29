@@ -9,7 +9,8 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     database_url: str = "postgresql+asyncpg://postgres:password123@db:5432/internet_cafe"
     secret_key: str = "tu-llave-secreta-super-segura-123"
-    app_name: str = "Internet Cafe API"  
+    app_name: str = "Internet Cafe API" 
+    frontend_base_url: str = "http://localhost:5173" 
 
     class Config:
         env_file = ".env"
