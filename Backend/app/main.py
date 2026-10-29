@@ -4,6 +4,7 @@ Inicializa la instancia del servidor, integra las configuraciones de entorno,
 y expone los endpoints de salud (/healthz) y disponibilidad de base de datos (/readyz).
 """
 
+from app.routers import machine, scan
 from app.config import settings
 from app.database import obtener_base_datos
 from app.logger import configurar_logger
@@ -20,8 +21,8 @@ app = FastAPI(
     version="0.1.0",
     description="Servidor API REST para la gestión del sistema de internet café.",
 )
-
-
+app.include_router(machine.router, prefix="/api/v1")
+app.include_router(scan.router, prefix="/api/v1")
 @app.get("/healthz")
 def verificar_salud() -> dict:
     """Verifica el estado operativo básico del servidor backend.
