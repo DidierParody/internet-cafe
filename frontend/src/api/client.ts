@@ -12,6 +12,10 @@ export function setAccessToken(token: string | null): void {
   accessToken = token
 }
 
+export function clearAccessToken(): void {
+  accessToken = null
+}
+
 export function getAuthHeader(): Record<string, string> {
   return accessToken ? { Authorization: `Bearer ${accessToken}` } : {}
 }
