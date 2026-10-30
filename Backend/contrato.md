@@ -1,22 +1,22 @@
-# Contrato de Backend y Especificación de Datos / OpenAPI v0.1 (BE-01) - Sprint 1
+﻿# Contrato de Backend y EspecificaciÃ³n de Datos / OpenAPI v0.1 (BE-01) - Sprint 1
 
-## 1. Objetivo del Módulo
-Establecer el contrato técnico y de datos de la API REST del sistema Internet Café para el Sprint 1, acordado formalmente con los equipos de UI, Desktop y Seguridad.
+## 1. Objetivo del MÃ³dulo
+Establecer el contrato tÃ©cnico y de datos de la API REST del sistema Internet CafÃ© para el Sprint 1, acordado formalmente con los equipos de UI, Desktop y Seguridad.
 
-## 2. Especificación OpenAPI v0.1 y Contratos de Datos
+## 2. EspecificaciÃ³n OpenAPI v0.1 y Contratos de Datos
 
 ```yaml
 openapi: 3.0.3
 info:
-  title: Internet Cafe API - Contrato 
+  title: Internet Cafe API - Contrato
   version: 0.1.0
-  description: Contrato de datos y endpoints para registro asíncrono, enrolamiento con JWK, credenciales provisionales y long-polling.
+  description: Contrato de datos y endpoints para registro asÃ­ncrono, enrolamiento con JWK, credenciales provisionales y long-polling.
 
 paths:
   /api/v1/registro:
     post:
       summary: Registro inicial de usuario o dispositivo
-      description: Inicia el proceso de registro devolviendo un código 202 indicando aceptación para procesamiento asíncrono.
+      description: Inicia el proceso de registro devolviendo un cÃ³digo 202 indicando aceptaciÃ³n para procesamiento asÃ­ncrono.
       requestBody:
         required: true
         content:
@@ -55,8 +55,8 @@ paths:
 
   /api/v1/enroll:
     post:
-      summary: Enrolamiento con JWK y prueba de posesión
-      description: Valida la clave pública JSON Web Key y la prueba criptográfica de posesión.
+      summary: Enrolamiento con JWK y prueba de posesiÃ³n
+      description: Valida la clave pÃºblica JSON Web Key y la prueba criptogrÃ¡fica de posesiÃ³n.
       requestBody:
         required: true
         content:
@@ -69,15 +69,15 @@ paths:
               properties:
                 jwk:
                   type: object
-                  description: Estructura de clave pública JSON Web Key (RFC 7517).
+                  description: Estructura de clave pÃºblica JSON Web Key (RFC 7517).
                   example: {"kty": "RSA", "n": "...", "e": "AQAB"}
                 prueba_posesion:
                   type: string
-                  description: Firma criptográfica firmada con la clave privada correspondiente.
+                  description: Firma criptogrÃ¡fica firmada con la clave privada correspondiente.
                   example: "eyJhbGciOiJSUzI1NiIs..."
       responses:
         '200':
-          description: Enrolamiento completado con éxito.
+          description: Enrolamiento completado con Ã©xito.
           content:
             application/json:
               schema:
@@ -92,8 +92,8 @@ paths:
 
   /api/v1/credencial-provisional:
     get:
-      summary: Emisión de credencial provisional
-      description: Entrega una credencial temporal bajo validación de seguridad previa.
+      summary: EmisiÃ³n de credencial provisional
+      description: Entrega una credencial temporal bajo validaciÃ³n de seguridad previa.
       parameters:
         - in: header
           name: X-Device-ID
@@ -118,7 +118,7 @@ paths:
   /api/v1/long-poll:
     get:
       summary: Canal de sondeo largo (Long-Poll)
-      description: Mantiene la conexión abierta hasta que ocurra un evento relevante para el cliente.
+      description: Mantiene la conexiÃ³n abierta hasta que ocurra un evento relevante para el cliente.
       parameters:
         - in: query
           name: ultimo_evento_id
@@ -142,3 +142,151 @@ paths:
                   datos:
                     type: object
                     example: {"terminal": "PC-05", "tiempo_restante": 3600}
+
+
+  /api/v1/machine/challenges:
+    post:
+      summary: Generar un reto QR para una mÃ¡quina
+      description: Crea un reto QR de un solo uso para el equipo identificado.
+      parameters:
+        - in: header
+          name: x-machine-code
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Reto QR creado correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - challenge_id
+                  - qr_url
+                  - expires_at
+                  - rotate_after_s
+                properties:
+                  challenge_id:
+                    type: string
+                    format: uuid
+                  qr_url:
+                    type: string
+                    format: uri
+                  expires_at:
+                    type: string
+                    format: date-time
+                  rotate_after_s:
+                    type: integer
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/v1/scan/preview:
+    post:
+      summary: Consultar vista previa de un reto QR
+      description: Obtiene informaciÃ³n del equipo antes de confirmar el acceso.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+              properties:
+                token:
+                  type: string
+      responses:
+        '200':
+          description: Vista previa obtenida correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - machine
+                  - expires_at
+                  - active_session
+                properties:
+                  machine:
+                    type: object
+                    required:
+                      - code
+                      - lab
+                    properties:
+                      code:
+                        type: string
+                      lab:
+                        type: string
+                  expires_at:
+                    type: string
+                    format: date-time
+                  active_session:
+                    type: object
+                    nullable: true
+                    properties:
+                      machine_code:
+                        type: string
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '410':
+          $ref: '#/components/responses/Gone'
+
+components:
+  schemas:
+    ProblemDetails:
+      type: object
+      description: Formato de error conforme a RFC 9457.
+      properties:
+        type:
+          type: string
+          format: uri-reference
+          default: about:blank
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        code:
+          type: string
+          description: CÃ³digo identificador del error.
+
+  responses:
+    Unauthorized:
+      description: No autorizado.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+    Forbidden:
+      description: Acceso prohibido.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+    NotFound:
+      description: Recurso no encontrado.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+    Conflict:
+      description: Conflicto con el estado actual del recurso.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+    Gone:
+      description: Reto QR expirado.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
