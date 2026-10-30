@@ -7,6 +7,7 @@ y expone los endpoints de salud (/healthz) y disponibilidad de base de datos (/r
 from app.routers import machine, scan
 from app.config import settings
 from app.database import obtener_base_datos
+from app.error_handlers import registrar_manejadores
 from app.logger import configurar_logger
 from fastapi import Depends, FastAPI
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -21,6 +22,7 @@ app = FastAPI(
     version="0.1.0",
     description="Servidor API REST para la gestión del sistema de internet café.",
 )
+registrar_manejadores(app)
 app.include_router(machine.router, prefix="/api/v1")
 app.include_router(scan.router, prefix="/api/v1")
 @app.get("/healthz")

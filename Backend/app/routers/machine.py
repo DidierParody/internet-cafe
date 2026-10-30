@@ -1,13 +1,14 @@
 import uuid
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, Header, HTTPException
+from fastapi import APIRouter, Depends, Header
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
 from app.database import obtener_base_datos
+from app.errors import AppError, ErrorCode
 from app.models import Machine
 from app.services import challenges
 
@@ -30,7 +31,7 @@ async def get_current_machine(
         await db.execute(select(Machine).where(Machine.code == x_machine_code))
     ).scalar_one_or_none()
     if machine is None:
-        raise HTTPException(401, detail={"code": "MACHINE_SIGNATURE_INVALID"})
+        raise AppError(ErrorCode.MACHINE_SIGNATURE_INVALID)
     return machine
 
 
@@ -44,7 +45,7 @@ async def crear_reto(
         # AQUÍ ESTABA EL ERROR (los parámetros estaban invertidos)
         reto, token = await challenges.crear_reto(db, machine.id)
     except challenges.MachineNotActiveError:
-        raise HTTPException(403, detail={"code": "MACHINE_DISABLED"})
+        raise AppError(ErrorCode.MACHINE_DISABLED)
     await db.commit()
 
     return ChallengeResponse(

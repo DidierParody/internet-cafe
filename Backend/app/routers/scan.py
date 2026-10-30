@@ -1,10 +1,11 @@
 import uuid
 from datetime import datetime
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import obtener_base_datos
+from app.errors import AppError, ErrorCode
 from app.services import challenges
 
 router = APIRouter(prefix="/scan", tags=["scan"])
@@ -43,8 +44,8 @@ async def ver_vista_previa(
         datos = await challenges.obtener_vista_previa(db, payload.token, ESTUDIANTE_MOCK_ID)
         return datos
     except challenges.ChallengeNotFoundError:
-        raise HTTPException(404, detail={"code": "CHALLENGE_NOT_FOUND"})
+        raise AppError(ErrorCode.CHALLENGE_NOT_FOUND)
     except challenges.ChallengeExpiredError:
-        raise HTTPException(410, detail={"code": "CHALLENGE_EXPIRED"})
+        raise AppError(ErrorCode.CHALLENGE_EXPIRED)
     except challenges.ChallengeAlreadyUsedError:
-        raise HTTPException(409, detail={"code": "CHALLENGE_ALREADY_USED"})
+        raise AppError(ErrorCode.CHALLENGE_ALREADY_USED)
