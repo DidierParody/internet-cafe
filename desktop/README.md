@@ -13,3 +13,13 @@ that group, read-only access is granted to Authenticated Users instead. The JWK 
 supplied by the caller and is not embedded in the source.
 
 Run the unit tests from this directory with `gradle test`.
+
+## QR rotation (DSK-05a)
+
+The QR screen requests a new challenge from `POST /api/v1/machine/challenges`
+a few seconds before `rotate_after_s` elapses (default margin: 5 seconds), so the
+code on screen stays valid. On success the QR image is regenerated and the
+countdown restarts from the new `rotate_after_s`. Backend errors are retried a
+limited number of times (default: 3); the last valid QR stays visible until it
+expires, and the scheduler does not loop forever. Closing the QR screen stops
+the rotation thread. Challenge URLs and tokens are not written to logs.

@@ -1,6 +1,9 @@
 package org.internetcafe.desktop.screens;
 
 import com.google.zxing.common.BitMatrix;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -15,7 +18,11 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
+import org.internetcafe.desktop.qr.QrCountdown;
 import org.internetcafe.desktop.qr.QrGenerator;
+import org.internetcafe.desktop.qr.QrRotationService;
+import org.internetcafe.desktop.services.ApiClient;
 
 /** Pantalla D-02: QR, código del equipo, sala, cuenta regresiva y estado de conexión. */
 public class QrScreen {
@@ -33,6 +40,9 @@ public class QrScreen {
   private final Button skipButton;
   private Runnable onBack;
   private Runnable onSkip;
+  private QrRotationService rotationService;
+  private Timeline countdownTimeline;
+  private QrCountdown countdown;
 
   public QrScreen() {
     this(new QrScreenModel("LAB1-PC03", "Sala 1", ConnectionStatus.ONLINE, 45));
@@ -122,6 +132,62 @@ public class QrScreen {
 
   public void setOnSkip(Runnable onSkip) {
     this.onSkip = onSkip;
+  }
+
+  /** Starts requesting challenges from the backend and keeps the QR and countdown up to date. */
+  public void startRotation(ApiClient apiClient, String machineCode) {
+    stopRotation();
+    rotationService =
+        new QrRotationService(() -> apiClient.createChallenge(machineCode), this::onChallengeReady);
+    rotationService.start();
+  }
+
+  /** Stops the rotation thread and the countdown ticks. Safe to call more than once. */
+  public void stopRotation() {
+    if (countdownTimeline != null) {
+      countdownTimeline.stop();
+      countdownTimeline = null;
+    }
+    countdown = null;
+    if (rotationService != null) {
+      rotationService.stop();
+      rotationService = null;
+    }
+  }
+
+  private void onChallengeReady(BitMatrix qr, QrCountdown nextCountdown) {
+    Runnable update =
+        () -> {
+          if (rotationService == null) {
+            return;
+          }
+          qrView.setImage(toImage(qr));
+          countdown = nextCountdown;
+          updateCountdownLabel();
+          startCountdownTicks();
+        };
+    if (Platform.isFxApplicationThread()) {
+      update.run();
+    } else {
+      Platform.runLater(update);
+    }
+  }
+
+  private void startCountdownTicks() {
+    if (countdownTimeline != null) {
+      countdownTimeline.stop();
+    }
+    countdownTimeline =
+        new Timeline(new KeyFrame(Duration.seconds(1), event -> updateCountdownLabel()));
+    countdownTimeline.setCycleCount(Timeline.INDEFINITE);
+    countdownTimeline.play();
+  }
+
+  private void updateCountdownLabel() {
+    if (countdown == null) {
+      return;
+    }
+    countdownLabel.setText("Expira en " + countdown.remainingSeconds() + " s");
   }
 
   public void render() {
