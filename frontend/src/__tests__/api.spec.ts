@@ -1,8 +1,8 @@
-import { afterEach, describe, expect, it } from 'vitest'
-import { api, setAccessToken } from '../api/client'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { api, clearAccessToken, setAccessToken } from '../api/client'
 
 afterEach(() => {
-  setAccessToken(null)
+  clearAccessToken()
 })
 
 describe('Integración del cliente API con MSW', () => {
@@ -120,5 +120,46 @@ describe('Integración del cliente API con MSW', () => {
     })
 
     expect(data?.challenge_id).toBe('123e4567-e89b-12d3-a456-426614174000')
+  })
+
+  it('al limpiar el token con clearAccessToken() las peticiones posteriores no envían Authorization', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch')
+
+    try {
+      setAccessToken('token-temporal')
+      await api.POST('/api/v1/machine/challenges', {
+        params: {
+          header: {
+            'x-machine-code': 'PC-001',
+          },
+        },
+      })
+
+      const authenticatedCall = fetchSpy.mock.calls[fetchSpy.mock.calls.length - 1]
+      const authenticatedRequest =
+        authenticatedCall?.[0] instanceof Request
+          ? authenticatedCall[0]
+          : new Request(authenticatedCall?.[0] as string, authenticatedCall?.[1])
+      expect(authenticatedRequest.headers.get('Authorization')).toBe('Bearer token-temporal')
+
+      clearAccessToken()
+
+      await api.POST('/api/v1/machine/challenges', {
+        params: {
+          header: {
+            'x-machine-code': 'PC-001',
+          },
+        },
+      })
+
+      const unauthenticatedCall = fetchSpy.mock.calls[fetchSpy.mock.calls.length - 1]
+      const unauthenticatedRequest =
+        unauthenticatedCall?.[0] instanceof Request
+          ? unauthenticatedCall[0]
+          : new Request(unauthenticatedCall?.[0] as string, unauthenticatedCall?.[1])
+      expect(unauthenticatedRequest.headers.get('Authorization')).toBeNull()
+    } finally {
+      fetchSpy.mockRestore()
+    }
   })
 })

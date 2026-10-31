@@ -6,3 +6,7 @@ alembic
 pydantic-settings
 psycopg2-binary
 greenlet
+pytest
+pytest-asyncio
+httpx
+freezegun
