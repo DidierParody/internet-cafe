@@ -56,3 +56,10 @@ def notify(machine_id: uuid.UUID, data: Any = None) -> None:
 def get_event_payload(machine_id: uuid.UUID) -> Any:
     """Obtiene el payload más reciente notificado para el equipo."""
     return _payloads.get(machine_id)
+
+
+def reset_events() -> None:
+    """Limpia todos los listeners y payloads registrados (útil para pruebas y reinicios)."""
+    _listeners.clear()
+    _payloads.clear()
+

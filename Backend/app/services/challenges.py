@@ -16,6 +16,7 @@ from app.models import (
     Machine,
     MachineStatus,
     SessionEndReason,
+    User,
 )
 from app.services import events
 
@@ -319,7 +320,7 @@ async def reclamar_reto_qr(
     # Confirmar transacción en BD
     await db.commit()
 
-    # 9. Obtener nombre de la sala y notificar al equipo (SRS §8.1.7)
+    # 9. Obtener datos de sala, usuario y notificar al equipo (SRS §8.1.7)
     lab_name = "Sala sin asignar"
     if machine.lab_id:
         lab_res = await db.execute(select(Lab).where(Lab.id == machine.lab_id))
@@ -327,19 +328,102 @@ async def reclamar_reto_qr(
         if lab:
             lab_name = lab.name
 
+    full_name = "Estudiante"
+    student_code_masked = "********"
+    user_res = await db.execute(select(User).where(User.id == user_id))
+    user_obj = user_res.scalar_one_or_none()
+    if user_obj:
+        if user_obj.full_name_ct:
+            try:
+                full_name = user_obj.full_name_ct.decode("utf-8", errors="ignore") or "Estudiante"
+            except Exception:
+                full_name = "Estudiante"
+        if user_obj.student_code_ct:
+            try:
+                raw_code = user_obj.student_code_ct.decode("utf-8", errors="ignore")
+                student_code_masked = mask_student_code(raw_code)
+            except Exception:
+                pass
+
     session_payload = {
         "status": "approved",
         "session": {
-            "id": str(nueva_sesion.id),
+            "id": nueva_sesion.id,
             "status": "active",
-            "started_at": nueva_sesion.started_at.isoformat(),
-            "machine": {
-                "id": str(machine.id),
-                "code": machine.code,
-                "lab": lab_name,
-            },
+            "started_at": nueva_sesion.started_at,
         },
+        "user": {
+            "full_name": full_name,
+            "student_code_masked": student_code_masked,
+        },
+        "recent_accesses": [],
     }
     events.notify(machine.id, session_payload)
 
     return nueva_sesion, machine, lab_name, False
+
+
+def mask_student_code(code: str | None) -> str:
+    """Enmascara el código de estudiante para proteger PII (SRS §9.1 / RNF-PRI-02).
+
+    Ejemplo: '20211020034' -> '2021****34'
+    """
+    if not code:
+        return "********"
+    if len(code) <= 4:
+        return "****"
+    if len(code) <= 6:
+        return f"{code[:2]}**{code[-2:]}"
+    return f"{code[:4]}{'*' * (len(code) - 6)}{code[-2:]}"
+
+
+async def obtener_sesion_activa_equipo(
+    db: AsyncSession,
+    machine_id: uuid.UUID,
+) -> dict | None:
+    """Busca si el equipo tiene una sesión activa y retorna los datos estructurados para long-poll (SRS §8.1)."""
+    stmt = (
+        select(AccessSession)
+        .where(
+            AccessSession.machine_id == machine_id,
+            AccessSession.ended_at.is_(None),
+        )
+        .order_by(AccessSession.started_at.desc())
+    )
+    res = await db.execute(stmt)
+    sesion = res.scalar_one_or_none()
+    if not sesion:
+        return None
+
+    full_name = "Estudiante"
+    student_code_masked = "********"
+    if sesion.user_id:
+        user_res = await db.execute(select(User).where(User.id == sesion.user_id))
+        user_obj = user_res.scalar_one_or_none()
+        if user_obj:
+            if user_obj.full_name_ct:
+                try:
+                    full_name = user_obj.full_name_ct.decode("utf-8", errors="ignore") or "Estudiante"
+                except Exception:
+                    full_name = "Estudiante"
+            if user_obj.student_code_ct:
+                try:
+                    raw_code = user_obj.student_code_ct.decode("utf-8", errors="ignore")
+                    student_code_masked = mask_student_code(raw_code)
+                except Exception:
+                    pass
+
+    return {
+        "status": "approved",
+        "session": {
+            "id": sesion.id,
+            "status": "active",
+            "started_at": sesion.started_at,
+        },
+        "user": {
+            "full_name": full_name,
+            "student_code_masked": student_code_masked,
+        },
+        "recent_accesses": [],
+    }
+

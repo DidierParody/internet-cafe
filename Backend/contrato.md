@@ -183,6 +183,89 @@ paths:
         '403':
           $ref: '#/components/responses/Forbidden'
 
+  /api/v1/machine/challenges/wait:
+    get:
+      summary: Espera en long-poll de la aprobación de un reto QR
+      description: Mantiene la conexión abierta hasta que un estudiante reclame el reto QR del equipo o venza el timeout.
+      parameters:
+        - in: header
+          name: x-machine-code
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: timeout
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 25
+            default: 25
+      responses:
+        '200':
+          description: Respuesta de long-poll (sesión aprobada o en espera).
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum:
+                      - approved
+                      - waiting
+                  session:
+                    type: object
+                    required:
+                      - id
+                      - status
+                      - started_at
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      status:
+                        type: string
+                        example: "active"
+                      started_at:
+                        type: string
+                        format: date-time
+                  user:
+                    type: object
+                    required:
+                      - full_name
+                      - student_code_masked
+                    properties:
+                      full_name:
+                        type: string
+                        example: "Ana Pérez"
+                      student_code_masked:
+                        type: string
+                        example: "2021****34"
+                  recent_accesses:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        machine_code:
+                          type: string
+                        lab:
+                          type: string
+                        started_at:
+                          type: string
+                          format: date-time
+                        ended_at:
+                          type: string
+                          format: date-time
+                        duration_s:
+                          type: integer
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
   /api/v1/scan/preview:
     post:
       summary: Consultar vista previa de un reto QR
