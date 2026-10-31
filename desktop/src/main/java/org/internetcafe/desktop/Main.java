@@ -3,6 +3,7 @@ package org.internetcafe.desktop;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.internetcafe.desktop.screens.BoardScreen;
 import org.internetcafe.desktop.screens.ConnectionStatus;
 import org.internetcafe.desktop.screens.DashboardScreen;
 import org.internetcafe.desktop.screens.EnrollScreen;
@@ -19,6 +20,7 @@ public class Main extends Application {
     QrScreenModel qrModel = new QrScreenModel("LAB1-PC03", "Sala 1", ConnectionStatus.ONLINE, 45);
     QrScreen qrScreen = new QrScreen(qrModel);
     DashboardScreen dashboardScreen = new DashboardScreen();
+    BoardScreen boardScreen = new BoardScreen("dev".equals(System.getProperty("app.profile")));
     ApiClient apiClient = new ApiClient();
     String machineCode = System.getProperty("machine.code", qrModel.machineCode());
 
@@ -57,6 +59,13 @@ public class Main extends Application {
         () -> {
           qrScreen.stopRotation();
           stage.setScene(new Scene(loginScreen.getRoot(), 1280, 800));
+        });
+
+    boardScreen.setOnBackToQr(
+        () -> {
+          boardScreen.stop();
+          qrScreen.startRotation(apiClient, machineCode);
+          stage.setScene(new Scene(qrScreen.getRoot(), 1280, 800));
         });
 
     dashboardScreen.setOnLogout(
