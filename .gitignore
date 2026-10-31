@@ -17,3 +17,4 @@ __pycache__/
 tools/keys/
 .env
 **/tools/keys/
+*.pem
