@@ -7,12 +7,15 @@ import App from '../App.vue'
 import { createAppRouter } from '../router'
 import { ApiError, login, register, type LoginResponse } from '../services/auth'
 import { setPendingScanToken, takePendingScanToken } from '../services/pendingScan'
+import { previewScan } from '../services/scan'
 import { useSessionStore } from '../stores/session'
 
 vi.mock('../services/auth', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../services/auth')>()
   return { ...actual, login: vi.fn(), register: vi.fn() }
 })
+
+vi.mock('../services/scan', () => ({ previewScan: vi.fn(), claimScan: vi.fn() }))
 
 const loginMock = vi.mocked(login)
 const registerMock = vi.mocked(register)
@@ -202,12 +205,13 @@ describe('RedirectingView (destino provisional)', () => {
     await vi.waitFor(() => expect(router.currentRoute.value.name).toBe('admin-machines'))
   })
 
-  it('con QR pendiente continúa en Confirmar acceso con el token', async () => {
+  it('con QR pendiente continúa en Confirmar acceso y usa el token', async () => {
+    vi.mocked(previewScan).mockRejectedValue(new Error('sin API en la prueba'))
     setPendingScanToken('tok123')
     const { router } = await openSignedIn('student')
     await vi.advanceTimersByTimeAsync(1300)
     await vi.waitFor(() => expect(router.currentRoute.value.name).toBe('confirm'))
-    expect(router.currentRoute.value.hash).toBe('#tok123')
+    await vi.waitFor(() => expect(previewScan).toHaveBeenCalledWith('tok123'))
   })
 })
 
